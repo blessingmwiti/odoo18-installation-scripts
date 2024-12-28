@@ -26,12 +26,52 @@ echo_yellow "You might be asked to enter ROOT password for SUPERUSER privileges.
 echo_green "Updating system..."
 sudo apt update -y || { echo_red "System update failed."; exit 1; }
 
-echo_green "Installing Git, PostgreSQL, Python3.12, Wkhtmltopdf, and other dependencies..."
-sudo apt install -y git postgresql postgresql-contrib python3.12 build-essential wget python3.12-dev \
-    python3.12-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev \
-    python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libtiff5-dev \
-    libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev \
-    libxcb1-dev wkhtmltopdf || { echo_red "Failed to install dependencies."; exit 1; }
+# echo_green "Installing Git, PostgreSQL, Python3.12, Wkhtmltopdf, and other dependencies..."
+# sudo apt install -y git postgresql postgresql-contrib python3.12 build-essential wget python3.12-dev \
+#     python3.12-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev \
+#     python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libtiff5-dev \
+#     libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev \
+#     libxcb1-dev wkhtmltopdf || { echo_red "Failed to install dependencies."; exit 1; }
+
+echo_yellow "Checking for Python 3.12 installation..."
+
+if ! python3.12 --version &>/dev/null; then
+    echo_red "Python 3.12 not found. Attempting to install it..."
+
+    # Add deadsnakes PPA for Ubuntu-based systems
+    if [[ "$(lsb_release -is)" == "Ubuntu" || "$(lsb_release -is)" == "LinuxMint" ]]; then
+        echo_green "Adding deadsnakes PPA..."
+        sudo add-apt-repository ppa:deadsnakes/ppa -y || { echo_red "Failed to add deadsnakes PPA."; exit 1; }
+        sudo apt update -y
+    fi
+
+    # Install Python 3.12
+    echo_green "Installing Python 3.12..."
+    sudo apt install python3.12 python3.12-venv python3.12-dev -y || {
+        echo_red "Failed to install Python 3.12 from repository. Installing from source..."
+        
+        # Install build dependencies
+        sudo apt install -y build-essential libssl-dev libffi-dev zlib1g-dev libbz2-dev \
+            libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+            xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev || {
+                echo_red "Failed to install build dependencies."; exit 1;
+            }
+
+        # Download and build Python 3.12 from source
+        cd /usr/src/
+        sudo wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz || { echo_red "Failed to download Python source."; exit 1; }
+        sudo tar xzf Python-3.12.0.tgz
+        cd Python-3.12.0
+        sudo ./configure --enable-optimizations
+        sudo make altinstall || { echo_red "Failed to compile and install Python 3.12."; exit 1; }
+
+        # Verify installation
+        python3.12 --version &>/dev/null || { echo_red "Python 3.12 installation failed."; exit 1; }
+    }
+
+else
+    echo_green "Python 3.12 is already installed."
+fi
 
 echo_green "Dependencies installed successfully."
 
