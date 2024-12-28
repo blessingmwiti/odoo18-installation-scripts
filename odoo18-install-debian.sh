@@ -66,6 +66,10 @@ else
     echo_green "Python 3.12 is already installed."
 fi
 
+echo_green "Installing Wkhtmltopdf..."
+
+sudo apt install -y wkhtmltopdf || { echo_red "Failed to install Wkhtmltopdf."; exit 1; }
+
 echo_green "Dependencies installed successfully."
 
 # Creating Odoo user
