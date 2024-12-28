@@ -4,8 +4,8 @@ Bash scripts for installing Odoo18 on Linux systems
 
 ## Available Linux Distros
 
-### Debian Based Distros
+### Ubuntu Based
 
 ```bash
-./odoo18-install-debian.sh
+./odoo18-install-ubuntu.sh
 ```
