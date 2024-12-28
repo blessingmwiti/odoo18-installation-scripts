@@ -26,13 +26,6 @@ echo_yellow "You might be asked to enter ROOT password for SUPERUSER privileges.
 echo_green "Updating system..."
 sudo apt update -y || { echo_red "System update failed."; exit 1; }
 
-# echo_green "Installing Git, PostgreSQL, Python3.12, Wkhtmltopdf, and other dependencies..."
-# sudo apt install -y git postgresql postgresql-contrib python3.12 build-essential wget python3.12-dev \
-#     python3.12-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev \
-#     python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libtiff5-dev \
-#     libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev \
-#     libxcb1-dev wkhtmltopdf || { echo_red "Failed to install dependencies."; exit 1; }
-
 echo_yellow "Checking for Python 3.12 installation..."
 
 if ! python3.12 --version &>/dev/null; then
@@ -78,6 +71,10 @@ echo_green "Dependencies installed successfully."
 # Creating Odoo user
 echo_green "Creating Odoo user..."
 sudo adduser --system --quiet --shell=/bin/bash --home=/opt/odoo --group odoo || { echo_red "Failed to create Odoo user."; exit 1; }
+
+echo_green "Installing Postgresql..."
+
+sudo apt install postgresql postgresql-contrib -y || { echo_red "Failed to install PostgreSQL."; exit 1; }
 
 # Setting up PostgreSQL
 echo_green "Starting and enabling PostgreSQL..."
