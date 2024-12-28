@@ -10,7 +10,12 @@ sudo apt update -y
 
 echo "Installing Git, PostgresQl, Python3.12, Wkhtmltopdf and other dependencies..."
 
-sudo apt install git postgresql postgresql-contrib python3.12 build-essential wget python3.12-dev python3.12-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libldap2-dev libtiff5-dev libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev wkhtmltopdf -y
+if (sudo apt install git postgresql postgresql-contrib python3.12 build-essential wget python3.12-dev python3.12-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libldap2-dev libtiff5-dev libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev wkhtmltopdf -y) {
+    echo "Dependencies installed successfully"
+} else {
+    echo "Failed to install dependencies"
+    exit 1
+}
 
 clear
 
