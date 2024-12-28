@@ -85,8 +85,13 @@ echo_green "Starting and enabling PostgreSQL..."
 sudo systemctl start postgresql && sudo systemctl enable postgresql || { echo_red "Failed to start PostgreSQL."; exit 1; }
 
 
-echo_green "Creating PostgreSQL user for Odoo..."
-sudo -u postgres createuser --createdb odoo || { echo_red "Failed to create PostgreSQL user."; exit 1; }
+echo_green "Checking if PostgreSQL user 'odoo' exists..."
+if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='odoo'" | grep -q 1; then
+    echo_yellow "PostgreSQL user 'odoo' already exists."
+else
+    echo_green "Creating PostgreSQL user for Odoo..."
+    sudo -u postgres createuser --createdb odoo || { echo_red "Failed to create PostgreSQL user."; exit 1; }
+fi
 
 # Setting up Odoo directory
 echo_green "Setting up Odoo directory and permissions..."
