@@ -145,7 +145,7 @@ if [ -d "/opt/odoo/odoo" ]; then
     echo_yellow "Odoo repository already cloned. Skipping clone."
 else
     echo_green "Cloning Odoo 18 from GitHub..."
-    sudo -u odoo git clone --depth 1 --branch 18.0 https://www.github.com/odoo/odoo /opt/odoo/odoo || {
+    sudo -u odoo git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo /opt/odoo/odoo || {
         echo_red "Failed to clone Odoo repository."
         exit 1
     }
