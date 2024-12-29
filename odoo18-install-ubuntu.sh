@@ -94,11 +94,16 @@ sudo apt install -y wkhtmltopdf || {
 echo_green "Dependencies installed successfully."
 
 # Creating Odoo user
-echo_green "Creating Odoo user..."
-sudo adduser --system --quiet --shell=/bin/bash --home=/opt/odoo --group odoo || {
-    echo_red "Failed to create Odoo user."
-    exit 1
-}
+echo_green "Checking if Odoo user exists..."
+if id "odoo" &>/dev/null; then
+    echo_yellow "Odoo user already exists."
+else
+    echo_green "Creating Odoo user..."
+    sudo adduser --system --quiet --shell=/bin/bash --home=/opt/odoo --group odoo || {
+        echo_red "Failed to create Odoo user."
+        exit 1
+    }
+fi
 
 echo_green "Installing Postgresql..."
 
@@ -126,22 +131,37 @@ else
 fi
 
 # Setting up Odoo directory
-echo_green "Setting up Odoo directory and permissions..."
-sudo mkdir -p /opt/odoo/odoo-custom-addons
-sudo chown -R odoo:odoo /opt/odoo
+echo_green "Checking if Odoo directory exists..."
+if [ -d "/opt/odoo" ]; then
+    echo_yellow "Odoo directory already exists. Skipping creation."
+else
+    echo_green "Setting up Odoo directory and permissions..."
+    sudo mkdir -p /opt/odoo/odoo-custom-addons
+    sudo chown -R odoo:odoo /opt/odoo
+fi
 
-echo_green "Cloning Odoo 18 from GitHub..."
-sudo -u odoo git clone --depth 1 --branch 18.0 https://www.github.com/odoo/odoo /opt/odoo/odoo || {
-    echo_red "Failed to clone Odoo repository."
-    exit 1
-}
+echo_green "Checking if Odoo repository is already cloned..."
+if [ -d "/opt/odoo/odoo" ]; then
+    echo_yellow "Odoo repository already cloned. Skipping clone."
+else
+    echo_green "Cloning Odoo 18 from GitHub..."
+    sudo -u odoo git clone --depth 1 --branch 18.0 https://www.github.com/odoo/odoo /opt/odoo/odoo || {
+        echo_red "Failed to clone Odoo repository."
+        exit 1
+    }
+fi
 
 # Creating Python virtual environment
-echo_green "Creating virtual environment for Odoo..."
-sudo -u odoo python3.12 -m venv /opt/odoo/odoo-venv || {
-    echo_red "Failed to create virtual environment."
-    exit 1
-}
+echo_green "Checking if virtual environment already exists..."
+if [ -d "/opt/odoo/odoo-venv" ]; then
+    echo_yellow "Virtual environment already exists. Skipping creation."
+else
+    echo_green "Creating virtual environment for Odoo..."
+    sudo -u odoo python3.12 -m venv /opt/odoo/odoo-venv || {
+        echo_red "Failed to create virtual environment."
+        exit 1
+    }
+fi
 
 echo_green "Installing Python dependencies..."
 sudo -u odoo /opt/odoo/odoo-venv/bin/pip install wheel
@@ -151,8 +171,12 @@ sudo -u odoo /opt/odoo/odoo-venv/bin/pip install -r /opt/odoo/odoo/requirements.
 }
 
 # Creating Odoo configuration file
-echo_green "Creating Odoo configuration file..."
-cat <<EOF | sudo tee /etc/odoo.conf
+echo_green "Checking if Odoo configuration file already exists..."
+if [ -f "/etc/odoo.conf" ]; then
+    echo_yellow "Odoo configuration file already exists. Skipping creation."
+else
+    echo_green "Creating Odoo configuration file..."
+    cat <<EOF | sudo tee /etc/odoo.conf
 [options]
 admin_passwd = admin
 db_host = False
@@ -161,10 +185,15 @@ db_user = odoo
 db_password = False
 addons_path = /opt/odoo/odoo/addons,/opt/odoo/odoo-custom-addons
 EOF
+fi
 
 # Setting up Odoo service
-echo_green "Creating Odoo service file..."
-cat <<EOF | sudo tee /etc/systemd/system/odoo.service
+echo_green "Checking if Odoo service file already exists..."
+if [ -f "/etc/systemd/system/odoo.service" ]; then
+    echo_yellow "Odoo service file already exists. Skipping creation."
+else
+    echo_green "Creating Odoo service file..."
+    cat <<EOF | sudo tee /etc/systemd/system/odoo.service
 [Unit]
 Description=Odoo18
 Requires=postgresql.service
@@ -182,6 +211,7 @@ StandardOutput=journal+console
 [Install]
 WantedBy=default.target
 EOF
+fi
 
 echo_green "Reloading systemd daemon..."
 sudo systemctl daemon-reload
@@ -194,5 +224,5 @@ sudo systemctl start odoo && sudo systemctl enable odoo || {
 
 # Finishing up
 echo_green "Odoo 18 has been successfully installed and started."
-echo_yellow "You can access Odoo at http://localhost:8069"
+echo_yellow "You can access Odoo at http://localhost:8069...if on cloud, chnage the IP address accordingly."
 echo_green "Thank you for using this script!"
