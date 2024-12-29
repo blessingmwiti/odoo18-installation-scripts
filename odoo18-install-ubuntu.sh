@@ -204,7 +204,8 @@ PermissionsStartOnly=true
 User=odoo
 Group=odoo
 ExecStart=/opt/odoo/odoo-venv/bin/python3 /opt/odoo/odoo/odoo-bin -c /etc/odoo.conf
-StandardOutput=journal+console
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=default.target
