@@ -1,8 +1,8 @@
-# Odoo18 Installation Scripts [Beta]
+# Odoo18 Installation Scripts
 
 Bash scripts for installing Odoo18 on Linux systems
 
-## Available Linux Distros
+## Available Linux Distros [Tested]
 
 ### Ubuntu Based
 
