@@ -129,14 +129,11 @@ else
 fi
 
 # Setting up Odoo directory
-echo_green "Checking if Odoo directory exists..."
-if [ -d "/opt/odoo" ]; then
-    echo_yellow "Odoo directory already exists. Skipping creation."
-else
-    echo_green "Setting up Odoo directory and permissions..."
-    sudo mkdir -p /opt/odoo/odoo-custom-addons
-    sudo chown -R odoo:odoo /opt/odoo
-fi
+
+echo_green "Setting up Odoo directory and permissions..."
+sudo mdir /opt/odoo
+sudo mkdir -p /opt/odoo/odoo-custom-addons
+sudo chown -R odoo:odoo /opt/odoo
 
 echo_green "Checking if Odoo repository is already cloned..."
 if [ -d "/opt/odoo/odoo" ]; then
@@ -220,6 +217,24 @@ sudo systemctl start odoo && sudo systemctl enable odoo || {
     echo_red "Failed to start Odoo service."
     exit 1
 }
+
+clear
+
+echo_green "Set password for odoo user that you will remember..."
+sudo passwd odoo
+echo_green "Password for odoo user set successfuly.."
+
+sleep 3
+
+clear
+
+echo_green "Set password for postgres user that you will remember..."
+sudo passwd postgres
+echo_green "Password for postgres user set successfuly.."
+
+sleep 3
+
+clear
 
 # Finishing up
 echo_green "Odoo 18 has been successfully installed and started."
