@@ -27,7 +27,7 @@ echo_yellow "You might be asked to enter ROOT password for SUPERUSER privileges.
 echo_green "Updating system..."
 sudo apt update -y || {
     echo_red "System update failed. Check your internet connection or package manager."
-    exit 1
+    
 }
 
 # Check for Python 3.12 installation
@@ -40,7 +40,7 @@ if ! python3.12 --version &>/dev/null; then
         echo_green "Adding deadsnakes PPA..."
         sudo add-apt-repository ppa:deadsnakes/ppa -y || {
             echo_red "Failed to add deadsnakes PPA."
-            exit 1
+            
         }
         sudo apt update -y
     fi
@@ -52,14 +52,14 @@ if ! python3.12 --version &>/dev/null; then
         cd /usr/src/
         sudo wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz || {
             echo_red "Failed to download Python source."
-            exit 1
+            
         }
         sudo tar xzf Python-3.12.0.tgz
         cd Python-3.12.0
         sudo ./configure --enable-optimizations
         sudo make altinstall || {
             echo_red "Failed to compile and install Python 3.12."
-            exit 1
+            
         }
     }
 else
@@ -70,14 +70,14 @@ fi
 echo_green "Installing dependencies..."
 sudo apt install -y build-essential wget python3.12-dev python3.12-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libtiff5-dev libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev || {
     echo_red "Failed to install build dependencies."
-    exit 1
+    
 }
 
 # Install Wkhtmltopdf
 echo_green "Installing Wkhtmltopdf..."
 sudo apt install -y wkhtmltopdf || {
     echo_red "Failed to install Wkhtmltopdf."
-    exit 1
+    
 }
 
 # Create Odoo user
@@ -88,7 +88,7 @@ else
     echo_green "Creating Odoo user..."
     sudo adduser --system --quiet --shell=/bin/bash --home=/opt/odoo --group odoo || {
         echo_red "Failed to create Odoo user."
-        exit 1
+        
     }
 fi
 
@@ -96,14 +96,14 @@ fi
 echo_green "Installing PostgreSQL..."
 sudo apt install postgresql postgresql-contrib -y || {
     echo_red "Failed to install PostgreSQL."
-    exit 1
+    
 }
 
 # Start and enable PostgreSQL
 echo_green "Starting and enabling PostgreSQL..."
 sudo systemctl start postgresql && sudo systemctl enable postgresql || {
     echo_red "Failed to start PostgreSQL."
-    exit 1
+    
 }
 
 # Create PostgreSQL user for Odoo
@@ -114,7 +114,7 @@ else
     echo_green "Creating PostgreSQL user for Odoo..."
     sudo -u postgres createuser --createdb odoo || {
         echo_red "Failed to create PostgreSQL user."
-        exit 1
+        
     }
 fi
 
@@ -131,7 +131,7 @@ if [ -d "/opt/odoo/odoo" ]; then
 else
     sudo -u odoo git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo /opt/odoo/odoo || {
         echo_red "Failed to clone Odoo repository."
-        # exit 1
+        
     }
 fi
 
@@ -142,7 +142,7 @@ if [ -d "/opt/odoo/odoo-venv" ]; then
 else
     sudo -u odoo python3.12 -m venv /opt/odoo/odoo-venv || {
         echo_red "Failed to create virtual environment."
-        exit 1
+        
     }
 fi
 
@@ -151,7 +151,7 @@ echo_green "Installing Python dependencies..."
 sudo -u odoo /opt/odoo/odoo-venv/bin/pip install wheel
 sudo -u odoo /opt/odoo/odoo-venv/bin/pip install -r /opt/odoo/odoo/requirements.txt || {
     echo_red "Failed to install Python dependencies."
-    exit 1
+    
 }
 
 # Create Odoo configuration file
@@ -201,7 +201,7 @@ echo_green "Starting Odoo service..."
 sudo systemctl daemon-reload
 sudo systemctl start odoo && sudo systemctl enable odoo || {
     echo_red "Failed to start Odoo service."
-    exit 1
+    
 }
 
 # Completion message
