@@ -131,8 +131,20 @@ fi
 # Setting up Odoo directory
 
 echo_green "Setting up Odoo directory and permissions..."
-sudo mdir /opt/odoo
-sudo mkdir -p /opt/odoo/odoo-custom-addons
+echo_green "Checking if Odoo directory exists..."
+if [ -d "/opt/odoo" ]; then
+    echo_yellow "Odoo directory already exists. Skipping creation."
+else
+    echo_green "Creating Odoo directory..."
+    sudo mkdir /opt/odoo
+fi
+echo_green "Checking if odoo-custom-addons directory exists..."
+if [ -d "/opt/odoo/odoo-custom-addons" ]; then
+    echo_yellow "odoo-custom-addons directory already exists. Skipping creation."
+else
+    echo_green "Creating odoo-custom-addons directory..."
+    sudo mkdir /opt/odoo/odoo-custom-addons
+fi
 sudo chown -R odoo:odoo /opt/odoo
 
 echo_green "Checking if Odoo repository is already cloned..."
