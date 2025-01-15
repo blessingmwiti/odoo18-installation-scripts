@@ -131,7 +131,7 @@ if [ -d "/opt/odoo/odoo" ]; then
 else
     sudo -u odoo git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo /opt/odoo/odoo || {
         echo_red "Failed to clone Odoo repository."
-        exit 1
+        # exit 1
     }
 fi
 
