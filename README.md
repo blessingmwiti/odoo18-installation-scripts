@@ -1,4 +1,4 @@
-# Odoo 18 Installation Scripts
+# Odoo 15 Installation Scripts
 
 Bash scripts for installing Odoo 18 on Linux systems.
 
