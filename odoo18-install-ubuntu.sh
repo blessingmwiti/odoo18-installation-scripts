@@ -204,5 +204,21 @@ sudo systemctl start odoo && sudo systemctl enable odoo || {
     
 }
 
+clear
+
+echo_yellow "Enter postgres user password. Kindly remember it."
+sudo passwd postgres
+
+sleep 2
+
+clear
+
+echo_yellow "Enter Odoo user password. Kindly remember it."
+sudo passwd odoo
+
+sleep 2
+
+clear
+
 # Completion message
 echo_green "Odoo 18 installation complete. Access it at http://localhost:8069. Change localhost to your server IP if needed."
