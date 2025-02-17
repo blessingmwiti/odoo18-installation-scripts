@@ -188,13 +188,17 @@ PermissionsStartOnly=true
 User=odoo
 Group=odoo
 ExecStart=/opt/odoo/odoo-venv/bin/python3 /opt/odoo/odoo/odoo-bin -c /etc/odoo.conf
-StandardOutput=journal
-StandardError=journal
+StandardOutput=append:/var/log/odoo/odoo.log
+StandardError=append:/var/log/odoo/odoo.log
 
 [Install]
 WantedBy=default.target
 EOF
 fi
+
+sudo mkdir -p /var/log/odoo
+sudo chown odoo:odoo /var/log/odoo
+sudo chmod 755 /var/log/odoo
 
 # Start and enable Odoo service
 echo_green "Starting Odoo service..."
@@ -221,4 +225,5 @@ sleep 2
 clear
 
 # Completion message
-echo_green "Odoo 18 installation complete. Access it at http://localhost:8069. Change localhost to your server IP if needed."
+echo_green "Odoo 18 installation complete. Access it at http://localhost:8069. Change localhost to your server IP if needed. You can view the logs here 'tail -f /var/log/odoo/odoo.log'
+"
